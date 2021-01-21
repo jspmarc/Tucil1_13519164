@@ -4,7 +4,7 @@
  */
 
 #include <iostream> // string, cout
-#include <chrono> // itung operasi waktu
+#include <chrono> // itung waktu eksekusi
 #include <algorithm> // next_permutation()
 #include <fstream> // file operation
 #include <vector> // vector
@@ -34,20 +34,29 @@ int main(int argc, char *argv[])
 
     parse_file(argv[1], &semuaSoal);
 
+    /// Vektor untuk menyimpan semua jawaban
+    std::vector<std::vector<int>> answers(semuaSoal.size());
+
     auto start = sc.now();
     for (std::vector<std::vector<std::string>>::iterator it =
             semuaSoal.begin(); it != semuaSoal.end(); ++it)
     {
+        int i = it - semuaSoal.begin();
         auto partialStart = sc.now();
-        decrypt_cryparithm(*it);
+
+        answers[i] = decrypt_cryparithm(*it);
         auto partialEnd = sc.now();
         auto partialTimeSpend = static_cast<std::chrono::duration<double>>(partialEnd-partialStart);
-        printf("Soal ini membutuhkan: %lf detik.\n", partialTimeSpend.count());
+        printf("Soal ke-%d membutuhkan: %lf detik.\n", i+1, partialTimeSpend.count());
     }
     auto end = sc.now();
     auto timeSpend = static_cast<std::chrono::duration<double>>(end-start);
 
-    printf("Operasi dekripsi %lu soal membutuhkan %lf detik.\n", semuaSoal.size(), timeSpend.count());
+    print_vec(answers);
+    puts("");
+
+    printf("Operasi dekripsi %lu soal membutuhkan %lf detik.\n",
+            semuaSoal.size(), timeSpend.count());
 }
 
 // *** INISIALISASI FUNGSI-FUNGSI ***
@@ -147,7 +156,7 @@ void parse_file(char* fileName, std::vector<std::vector<std::string>>* output)
     }
 }
 
-void decrypt_cryparithm(std::vector<std::string> soal)
+std::vector<int> decrypt_cryparithm(std::vector<std::string> soal)
 {
     // proses perisapan dan inisialisasi
 
@@ -155,6 +164,8 @@ void decrypt_cryparithm(std::vector<std::string> soal)
     std::vector<char> letters = unique_letters(soal);
     /// vektor untuk menyimpan huruf pertama dari tiap operand
     std::vector<char> firstLetters(soal.size());
+    /// vektor untuk menyimpan operand yang diubah ke angka (4 byte integer)
+    std::vector<int> operandNumbers(soal.size());
 
     for (std::vector<std::string>::iterator it = soal.begin();
             it != soal.end();
@@ -202,8 +213,6 @@ void decrypt_cryparithm(std::vector<std::string> soal)
 
         if (stopThyLoop) continue;
 
-        /// vektor untuk menyimpan operand yang diubah ke angka (4 byte integer)
-        std::vector<int> operandNumbers(soal.size());
         /// variabel untuk menyimpan sum dari semua operand
         int sum = 0,
         /// variabel untuk menyimmpan sum 'yang seharusnya'
@@ -224,18 +233,10 @@ void decrypt_cryparithm(std::vector<std::string> soal)
             operandNumbers[i] = curNum;
         }
 
-        if (sum == realSum)
-        {
-            print_vec(operandNumbers);
-            stopThyLoop = true;
-        }
-
-        if (stopThyLoop) break;
-        //print_vec(operandNumbers);
-        //printf("\t");
-        //print_map(numberFromLetter);
-        //puts("");
+        if (sum == realSum) break;
     } while (std::next_permutation(numbers.begin(), numbers.end()));
+
+    return operandNumbers;
 }
 
 std::vector<char> unique_letters(std::vector<std::string> soal)

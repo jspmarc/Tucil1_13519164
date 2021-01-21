@@ -75,7 +75,7 @@ void parse_file(char* fileName, std::vector<std::vector<std::string>>* output);
  *
  * @param soal soal yang mau didekripsi
  */
-void decrypt_cryparithm(std::vector<std::string> soal);
+std::vector<int> decrypt_cryparithm(std::vector<std::string> soal);
 
 /**
  * Fungsi untuk mendapatkan huruf-huruf unik dari soal
