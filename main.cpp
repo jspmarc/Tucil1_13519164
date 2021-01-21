@@ -45,21 +45,28 @@ int main(int argc, char *argv[])
         auto partialStart = sc.now();
 
         answers[i] = decrypt_cryparithm(*it);
+
+        print_answer(*it, answers[i]);
+        printf("\n");
         auto partialEnd = sc.now();
         auto partialTimeSpend = static_cast<std::chrono::duration<double>>(partialEnd-partialStart);
         printf("Soal ke-%d membutuhkan: %lf detik.\n", i+1, partialTimeSpend.count());
     }
+
     auto end = sc.now();
     auto timeSpend = static_cast<std::chrono::duration<double>>(end-start);
 
-    print_vec(answers);
-    puts("");
-
-    printf("Operasi dekripsi %lu soal membutuhkan %lf detik.\n",
+    printf("Total operasi dekripsi %lu soal dan menuliskan output membutuhkan %lf detik.\n",
             semuaSoal.size(), timeSpend.count());
 }
 
 // *** INISIALISASI FUNGSI-FUNGSI ***
+
+template <class T>
+bool permutate_vec(std::vector<T>* vec)
+{
+    return std::next_permutation(vec->begin(), vec->end());
+}
 
 std::string strip_at_beginning(char* strToStrip)
 {
@@ -234,7 +241,8 @@ std::vector<int> decrypt_cryparithm(std::vector<std::string> soal)
         }
 
         if (sum == realSum) break;
-    } while (std::next_permutation(numbers.begin(), numbers.end()));
+    } while (permutate_vec(&numbers));
+    //} while (std::next_permutation(numbers.begin(), numbers.end()));
 
     return operandNumbers;
 }
@@ -266,6 +274,13 @@ std::vector<char> unique_letters(std::vector<std::string> soal)
     }
 
     return letters;
+}
+
+void print_answer(std::vector<std::string> soal, std::vector<int> answer)
+{
+    print_vec(soal);
+    printf("\t");
+    print_vec(answer);
 }
 
 // *** END ***

@@ -13,7 +13,17 @@
 // *** DEKLARASI FUNGSI-FUNGSI ***
 
 /**
- * Fungsi untuk menghapuskan whitespaces ('', '\t', '\n') dari awal C string.
+ * Fungsi untuk membuat permutasi dari suatu vektor
+ *
+ * @tparam T tipe data yang disimpan pada vektor
+ * @param *vec pointer ke vektor yang ingin dibuat permutasinya
+ * @returns true jika merupakan permutasi baru, false jika sudah kembali ke bentuk vektor awal
+ */
+template <class T>
+bool permutate_vec(std::vector<T>* vec);
+
+/**
+ * Fungsi untuk menghapuskan whitespaces ('', '\t', '\n') dari awal C string
  *
  * @param *strToStrip pointer ke C string yang ingin di-strip
  * @returns std::string yang sudah dihapuskan whitespace-nya
@@ -83,6 +93,15 @@ std::vector<int> decrypt_cryparithm(std::vector<std::string> soal);
  * @param soal soal yang ingin dicari huruf-huruf uniknya
  */
 std::vector<char> unique_letters(std::vector<std::string> soal);
+
+/**
+ * Fungsi untuk menuliskan jawaban sesuai dengan spek
+ *
+ * @param soal vektor yang berisi soal yang ingin diprint, hasil parse parse_file()
+ * @param answer jawaban dari soal yang ingin diprint, hasil decrypt_cryparithm()
+ */
+void print_answer(std::vector<std::string> soal, std::vector<int> answer);
+
 // *** END ***
 
 #endif
