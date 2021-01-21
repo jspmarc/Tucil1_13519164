@@ -3,11 +3,15 @@
  * Tanggal  : 20 Januari 2021
  */
 
-#include <fstream>
-#include <unordered_map>
-#include <sysexits.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <iostream> // string, cout
+#include <chrono> // itung operasi waktu
+#include <algorithm> // next_permutation()
+#include <fstream> // file operation
+#include <vector> // vector
+#include <unordered_map> // unordered_map
+#include <stdlib.h> // exit()
+#include <sysexits.h> // exit codes
+#include <stdio.h> // printf(), puts()
 #include "funcs.hpp"
 
 #define debug1() puts("males belajar tapi...")
@@ -26,18 +30,29 @@ int main(int argc, char *argv[])
     /// Vektor untuk nyimpen semua soal
     std::vector<std::vector<std::string>> semuaSoal;
 
-    parseFile(argv[1], &semuaSoal);
+    std::chrono::steady_clock sc;
 
+    parse_file(argv[1], &semuaSoal);
+
+    auto start = sc.now();
     for (std::vector<std::vector<std::string>>::iterator it =
             semuaSoal.begin(); it != semuaSoal.end(); ++it)
     {
-        decryptCryparithm(*it);
+        auto partialStart = sc.now();
+        decrypt_cryparithm(*it);
+        auto partialEnd = sc.now();
+        auto partialTimeSpend = static_cast<std::chrono::duration<double>>(partialEnd-partialStart);
+        printf("Soal ini membutuhkan: %lf detik.\n", partialTimeSpend.count());
     }
+    auto end = sc.now();
+    auto timeSpend = static_cast<std::chrono::duration<double>>(end-start);
+
+    printf("Operasi dekripsi %lu soal membutuhkan %lf detik.\n", semuaSoal.size(), timeSpend.count());
 }
 
 // *** INISIALISASI FUNGSI-FUNGSI ***
 
-std::string stripAtBeginning(char* strToStrip)
+std::string strip_at_beginning(char* strToStrip)
 {
     while ((*strToStrip == ' ' || *strToStrip == '\t' || *strToStrip == '\n')
             && (*strToStrip != '\0')) strToStrip++;
@@ -46,7 +61,7 @@ std::string stripAtBeginning(char* strToStrip)
 }
 
 template <class T>
-void printVec(std::vector<T> vec)
+void print_vec(std::vector<T> vec)
 {
     printf("[");
     for (auto it = vec.begin(); it != vec.end(); ++it)
@@ -54,7 +69,29 @@ void printVec(std::vector<T> vec)
     printf("]");
 }
 
-void parseFile(char* fileName, std::vector<std::vector<std::string>>* output)
+template <class T>
+void print_vec(std::vector<std::vector<T>> vec)
+{
+    puts("[");
+    for (auto it = vec.begin(); it != vec.end(); ++it)
+    {
+        printf("\t");
+        print_vec(*it);
+        puts(",");
+    }
+    printf("]");
+}
+
+template <class K, class V>
+void print_map(std::unordered_map<K, V> umap)
+{
+    printf("[");
+    for (auto it = umap.begin(); it != umap.end(); ++it)
+        std::cout << '<' << it->first << ',' << it->second << ">,";
+    printf("]");
+}
+
+void parse_file(char* fileName, std::vector<std::vector<std::string>>* output)
 {
     /// variabel untuk menyimmpan file
     std::fstream input;
@@ -77,7 +114,7 @@ void parseFile(char* fileName, std::vector<std::vector<std::string>>* output)
             do
             {
                 /// operand yang lagi dibaca, sesudah di-strip di depan
-                std::string operand = stripAtBeginning(&(line[0])).c_str();
+                std::string operand = strip_at_beginning(&(line[0])).c_str();
 
                 if (isReadingLastOperand)
                 {
@@ -110,22 +147,19 @@ void parseFile(char* fileName, std::vector<std::vector<std::string>>* output)
     }
 }
 
-template <class T>
-void printVec(std::vector<std::vector<T>> vecOvec)
+void decrypt_cryparithm(std::vector<std::string> soal)
 {
-    puts("[");
-    for (auto it = vecOvec.begin(); it != vecOvec.end(); ++it)
-    {
-        printf("\t");
-        printVec(*it);
-        puts(",");
-    }
-    printf("]");
-}
+    // proses perisapan dan inisialisasi
 
-void decryptCryparithm(std::vector<std::string> soal)
-{
-    std::vector<char> letters = uniqueLetters(soal);
+    /// vektor untuk menyimpan huruf-huruf unik
+    std::vector<char> letters = unique_letters(soal);
+    /// vektor untuk menyimpan huruf pertama dari tiap operand
+    std::vector<char> firstLetters(soal.size());
+
+    for (std::vector<std::string>::iterator it = soal.begin();
+            it != soal.end();
+            ++it)
+        firstLetters[it - soal.begin()] = ((*it)[0]);
 
     // probably not needed, but wut teh hecc
     if (letters.size() > MAX_UNIQUE_LETTERS)
@@ -135,10 +169,76 @@ void decryptCryparithm(std::vector<std::string> soal)
         exit(EX_DATAERR);
     }
 
-    // https://stackoverflow.com/questions/37759513/cryptarithmetic-puzzle
+    /// vektor untuk menyimpan angka-angka pada vektor
+    std::vector<int> numbers(10);
+    for (int i = 0; i < 10; ++i)
+        numbers[i] = i;
+
+    // proses dekripsi
+    do
+    {
+        /// unordered_map yang memetakan huruf ke angka
+        std::unordered_map<char, int> numberFromLetter;
+        /// unordered_map yan memetakan angka ke huruf (kebalikan numberFromLetter)
+        std::unordered_map<int, char> letterFromNumber;
+
+        // map huruf ke angka
+        // dan angka ke huruf
+        for (size_t i = 0; i < letters.size(); ++i)
+        {
+            numberFromLetter[letters[i]] = numbers[i];
+            letterFromNumber[numbers[i]] = letters[i];
+        }
+
+        // periksa huruf pertama ada yg bernilai 0 atau ngga
+
+        /// Penanda apakah loop perlu dilanjutkan atau tidak
+        bool stopThyLoop = false;
+        for (std::vector<char>::iterator it = firstLetters.begin();
+                it != firstLetters.end() && !stopThyLoop;
+                ++it)
+            if (numberFromLetter[*it] == 0)
+                stopThyLoop = true;
+
+        if (stopThyLoop) continue;
+
+        /// vektor untuk menyimpan operand yang diubah ke angka (4 byte integer)
+        std::vector<int> operandNumbers(soal.size());
+        /// variabel untuk menyimpan sum dari semua operand
+        int sum = 0,
+        /// variabel untuk menyimmpan sum 'yang seharusnya'
+            realSum = 0;
+
+        // ubah operand-operand menjadi angka
+        for (size_t i = 0; i < soal.size(); ++i)
+        {
+            int curNum = 0;
+            for (size_t j = 0; j < soal[i].size(); ++j)
+                curNum = curNum*10 + numberFromLetter[soal[i][j]];
+
+            if (i != soal.size()-1)
+                sum += curNum;
+            else
+                realSum = curNum;
+
+            operandNumbers[i] = curNum;
+        }
+
+        if (sum == realSum)
+        {
+            print_vec(operandNumbers);
+            stopThyLoop = true;
+        }
+
+        if (stopThyLoop) break;
+        //print_vec(operandNumbers);
+        //printf("\t");
+        //print_map(numberFromLetter);
+        //puts("");
+    } while (std::next_permutation(numbers.begin(), numbers.end()));
 }
 
-std::vector<char> uniqueLetters(std::vector<std::string> soal)
+std::vector<char> unique_letters(std::vector<std::string> soal)
 {
     /// vector untuk nyimpen huruf-huruf unik
     std::vector<char> letters;
