@@ -1,4 +1,4 @@
-def perm1(lst: list):
+def perm1(lst: list) -> list:
     if len(lst) == 0:
         return []
     elif len(lst) == 1:
@@ -15,10 +15,26 @@ def perm1(lst: list):
 
         return l
 
-# vec = Vector([i for i in range(10)])
-# print(vec)
+# batas_atas ekskulsif, batas_bawah inkulsif
+def newPerm(length: int, batas_bawah: int, batas_atas:int) -> list[list]:
+    if (length == 0):
+        return []
+    elif (length == 1):
+        l = [i for i in range(batas_bawah, batas_atas)]
+        return [l]
+    elif (length == 2):
+        l = [[i, j] for i in range(batas_bawah, batas_atas) for j in range(batas_bawah, batas_atas) if i != j]
+        return l
 
-lst = list('123')
-# for i in range(len(lst)):
-print(perm1(lst))
-print(len(perm1(lst)))
+    # else
+    perm = newPerm(length-1, batas_bawah, batas_atas)
+    l = []
+    for p in perm:
+        for i in range(batas_bawah, batas_atas):
+            if not (i in p):
+                l.append(p + [i])
+    return l
+
+l = newPerm(10, 0, 10)
+print(l)
+print(len(l))

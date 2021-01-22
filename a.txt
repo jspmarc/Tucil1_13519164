@@ -1,7 +1,4 @@
-THREE
-THREE
-  TWO
-  TWO
-  ONE+
+ SEND
+ MORE+
 ------
-ELEVEN
+MONEY

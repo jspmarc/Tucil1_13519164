@@ -32,3 +32,8 @@ ELEVEN
 PUZZLES+
 --------
 PICTURE
+
+CT
+ A+
+---
+CC
