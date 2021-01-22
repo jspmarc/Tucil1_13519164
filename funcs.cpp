@@ -151,7 +151,7 @@ void parse_file(char* fileName, std::vector<std::vector<std::string>>* output)
     }
 }
 
-std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soal)
+std::pair<std::unordered_map<char, int>, int> decrypt_cryparithm(std::vector<std::string> soal, std::vector<std::vector<int>> permutatedNumbers)
 {
     // proses perisapan dan inisialisasi
 
@@ -159,11 +159,12 @@ std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soa
     std::vector<char> letters = unique_letters(soal);
     /// vektor untuk menyimpan huruf pertama dari tiap operand
     std::vector<char> firstLetters(soal.size());
-    /// vektor untuk menyimpan operand yang diubah ke angka (4 byte integer)
-    std::vector<int> operandNumbers(soal.size());
-    /// variabel untuk menghitung jumlah kasus yang diuji
+    /// unordered_map yang memetakan huruf ke angka
+    std::unordered_map<char, int> numberFromLetter;
+    /// unordered_map yan memetakan angka ke huruf (kebalikan numberFromLetter)
     int cases = 0;
 
+    // bikin vektor huruf pertama
     for (std::vector<std::string>::iterator it = soal.begin();
             it != soal.end();
             ++it)
@@ -177,19 +178,9 @@ std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soa
         exit(EX_DATAERR);
     }
 
-    /// vektor untuk menyimpan angka-angka pada vektor
-    std::vector<int> numbers(10);
-    for (int i = 0; i < 10; ++i)
-        numbers[i] = i;
-
     // proses dekripsi
-    do
+    for (std::vector<int> numbers: permutatedNumbers)
     {
-        /// unordered_map yang memetakan huruf ke angka
-        std::unordered_map<char, int> numberFromLetter;
-        /// unordered_map yan memetakan angka ke huruf (kebalikan numberFromLetter)
-        std::unordered_map<int, char> letterFromNumber;
-
         // map huruf ke angka
         // dan angka ke huruf
         for (size_t i = 0; i < letters.size(); ++i)
@@ -223,18 +214,13 @@ std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soa
                 sum += curNum;
             else
                 realSum = curNum;
-
-            operandNumbers[i] = curNum;
         }
 
         if (sum == realSum) break;
         else cases++;
-    //} while (permutate_vec(&numbers));
-    } while (std::next_permutation(numbers.begin(), numbers.end()));
+    }
 
-    print_vec(permutate_vec(numbers));
-
-    return std::make_pair(operandNumbers, cases);
+    return std::make_pair(numberFromLetter, cases);
 }
 
 std::vector<char> unique_letters(std::vector<std::string> soal)
@@ -266,9 +252,23 @@ std::vector<char> unique_letters(std::vector<std::string> soal)
     return letters;
 }
 
-void print_answer(std::vector<std::string> soal, std::vector<int> answer)
+void print_answer(std::vector<std::string> soal, std::unordered_map<char, int> answer)
 {
     print_vec(soal);
     std::cout << std::endl;
-    print_vec(answer);
+    print_map(answer);
 }
+
+std::vector<std::vector<int>> generatePermutatedNumbers(int lim)
+{
+
+    /// vektor untuk menyimpan angka-angka pada vektor
+    std::vector<int> numbers(10);
+    for (int i = 0; i < 10; ++i)
+        numbers[i] = i;
+
+    std::vector<std::vector<int>> hasil = permutate_vec(numbers);
+
+    return hasil;
+}
+

@@ -21,7 +21,7 @@
 // *** DEKLARASI FUNGSI-FUNGSI ***
 
 /**
- * Fungsi untuk membuat permutasi dari suatu vektor
+ * Fungsi untuk membuat semua kemungkinan permutasi dari suatu vektor
  *
  * @tparam T tipe data yang disimpan pada vektor
  * @param vec vektor yang ingin dibuat permutasinya
@@ -103,8 +103,11 @@ void parse_file(char* fileName, std::vector<std::vector<std::string>>* output);
  * Fungsi untuk mendekripsi Cryptarithmetic
  *
  * @param soal soal yang mau didekripsi
+ * @param permutatedNumbers vektor berisi vektor-vektor kumpulan
+ * permutasi-permutasi yang mungkin dari vektor angka [0..MAX_UNIQUE_LETTERS]
+ * @returns sebuah pair berisi solusi benar dan jumlah kasus yang dikerjakan
  */
-std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soal);
+std::pair<std::unordered_map<char, int>, int> decrypt_cryparithm(std::vector<std::string> soal, std::vector<std::vector<int>> permutatedNumbers);
 
 /**
  * Fungsi untuk mendapatkan huruf-huruf unik dari soal
@@ -119,7 +122,15 @@ std::vector<char> unique_letters(std::vector<std::string> soal);
  * @param soal vektor yang berisi soal yang ingin diprint, hasil parse parse_file()
  * @param answer jawaban dari soal yang ingin diprint, hasil decrypt_cryparithm()
  */
-void print_answer(std::vector<std::string> soal, std::vector<int> answer);
+void print_answer(std::vector<std::string> soal, std::unordered_map<char, int> answer);
+
+/**
+ * Fungsi untuk menghasilkan list dari permutasi-permutasi mungkin dari
+ * angka-angka dalam range [0..lim]
+ *
+ * @param lim batas atas angka
+ */
+std::vector<std::vector<int>> generatePermutatedNumbers(int lim);
 
 // *** END ***
 

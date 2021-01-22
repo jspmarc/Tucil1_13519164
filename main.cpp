@@ -9,7 +9,6 @@
 #include <stdlib.h> // exit()
 #include <sysexits.h> // exit codes
 #include <stdio.h> // printf(), puts()
-#include <iostream>
 #include "funcs.hpp"
 
 int main(int argc, char *argv[])
@@ -42,10 +41,14 @@ int main(int argc, char *argv[])
     parse_file(namaFile, &semuaSoal);
 
     /// Vektor untuk menyimpan semua jawaban
-    std::vector<std::vector<int>> answers(semuaSoal.size());
+    std::vector<std::unordered_map<char, int>> answers(semuaSoal.size());
 
     /// awal perhitungan waktu semua soal
     auto start = sc.now();
+    /// vektor untuk menyimpan hasil permutasi dari 0 sampai 10
+    std::vector<std::vector<int>> permutatedNumbers = generatePermutatedNumbers(MAX_UNIQUE_LETTERS);
+    /// akhir waktu perhitungan waktu membuat permutasi angka-angka
+    auto endPermutation = sc.now();
     for (std::vector<std::vector<std::string>>::iterator it =
             semuaSoal.begin(); it != semuaSoal.end(); ++it)
     {
@@ -57,10 +60,10 @@ int main(int argc, char *argv[])
         /// jumlah kasus yg diuji
         int cases;
 
-        std::pair<std::vector<int>, int> result;
+        std::pair<std::unordered_map<char, int>, int> result;
 
         // dekripsi dan tuliskan hasil
-        result = decrypt_cryparithm(*it);
+        result = decrypt_cryparithm(*it, permutatedNumbers);
         answers[i] = result.first;
         cases = result.second;
 
@@ -77,12 +80,9 @@ int main(int argc, char *argv[])
     // akhir perhitungan waktu semua soal
     auto end = sc.now();
     auto timeSpend = static_cast<std::chrono::duration<double>>(end-start);
+    auto permutationTimeSpend = static_cast<std::chrono::duration<double>>(endPermutation - start);
 
-    printf("Total waktu eksekusi dekripsi %lu soal dan menuliskan output membutuhkan %lf detik.\n",
+    printf("Waktu untuk membuat permutasi adalah %lf.\n", permutationTimeSpend.count());
+    printf("Total waktu permutasi, eksekusi dekripsi %lu soal, dan menuliskan output membutuhkan %lf detik.\n",
             semuaSoal.size(), timeSpend.count());
 }
-
-/**
- * *** REFRENSI ***
- * Permutasi: https://www.geeksforgeeks.org/iterative-approach-to-print-all-permutations-of-an-array/
- */

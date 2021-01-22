@@ -19,3 +19,16 @@ DOUBLE
   TOIL+
 -------
 TROUBLE
+
+THREE
+THREE
+  TWO
+  TWO
+  ONE+
+------
+ELEVEN
+
+  TILES
+PUZZLES+
+--------
+PICTURE
