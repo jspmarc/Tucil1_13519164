@@ -40,7 +40,6 @@ int main(int argc, char *argv[])
     std::chrono::steady_clock sc;
 
     parse_file(namaFile, &semuaSoal);
-    free(namaFile);
 
     /// Vektor untuk menyimpan semua jawaban
     std::vector<std::vector<int>> answers(semuaSoal.size());
@@ -82,3 +81,8 @@ int main(int argc, char *argv[])
     printf("Total waktu eksekusi dekripsi %lu soal dan menuliskan output membutuhkan %lf detik.\n",
             semuaSoal.size(), timeSpend.count());
 }
+
+/**
+ * *** REFRENSI ***
+ * Permutasi: https://www.geeksforgeeks.org/iterative-approach-to-print-all-permutations-of-an-array/
+ */

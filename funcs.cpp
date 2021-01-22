@@ -14,12 +14,46 @@
 #include <stdlib.h> // exit()
 #include <sysexits.h> // exit codes
 
-// *** INISIALISASI FUNGSI-FUNGSI ***
-
-template <class T>
-bool permutate_vec(std::vector<T>* vec)
+template <typename T>
+std::vector<std::vector<T>> permutate_vec(std::vector<T> vec)
 {
-    return std::next_permutation(vec->begin(), vec->end());
+    if (vec.size() == 0) return {{}};
+    else if (vec.size() == 1) return {vec};
+    else if (vec.size() == 2) return {vec, {vec[1], vec[0]}};
+
+    /// vektor yang menampung hasil semua permutasi
+    std::vector<std::vector<T>> newVec;
+    /// elemen pertama vektor
+    T first = vec[0];
+    /// sisa elemen vektor
+    std::vector<T> rest(vec.size()-1);
+    std::copy(vec.begin()+1, vec.end(), rest.begin());
+    /// tail yang sudha dipermutasi
+    std::vector<std::vector<T>> permutated = permutate_vec(rest);
+
+    // p harusnya std::vector<std::vector<T>>::iterator
+    for (auto p = permutated.begin(); p != permutated.end(); ++p)
+    {
+        for (size_t i = 0; i < p->size() + 1; ++i)
+        {
+            /// vektor yang akan dipush ke newVec
+            std::vector<T> toBePushed = slice_vector(0, i, *p);
+            /// tail ke vektor yang akan dipush
+            std::vector<T> tail = slice_vector(i, p->size(), *p);
+            toBePushed.push_back(first);
+            toBePushed.insert(toBePushed.end(), tail.begin(), tail.end());
+
+            newVec.push_back(toBePushed);
+        }
+    }
+
+    return newVec;
+}
+
+template <typename T>
+std::vector<T> slice_vector(int n, int m, std::vector<T> vec)
+{
+    return std::vector<T> (vec.begin()+n, vec.begin()+m);
 }
 
 std::string strip_at_beginning(char* strToStrip)
@@ -30,7 +64,7 @@ std::string strip_at_beginning(char* strToStrip)
     return strToStrip;
 }
 
-template <class T>
+template <typename T>
 void print_vec(std::vector<T> vec)
 {
     std::cout << "[";
@@ -39,7 +73,7 @@ void print_vec(std::vector<T> vec)
     std::cout << "]";
 }
 
-template <class T>
+template <typename T>
 void print_vec(std::vector<std::vector<T>> vec)
 {
     std::cout << '[' << std::endl;
@@ -52,7 +86,7 @@ void print_vec(std::vector<std::vector<T>> vec)
     std::cout << ']';
 }
 
-template <class K, class V>
+template <typename K, typename V>
 void print_map(std::unordered_map<K, V> umap)
 {
     std::cout << "[";
@@ -159,10 +193,7 @@ std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soa
         // map huruf ke angka
         // dan angka ke huruf
         for (size_t i = 0; i < letters.size(); ++i)
-        {
             numberFromLetter[letters[i]] = numbers[i];
-            letterFromNumber[numbers[i]] = letters[i];
-        }
 
         // periksa huruf pertama ada yg bernilai 0 atau ngga
 
@@ -198,8 +229,10 @@ std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soa
 
         if (sum == realSum) break;
         else cases++;
-    } while (permutate_vec(&numbers));
-    //} while (std::next_permutation(numbers.begin(), numbers.end()));
+    //} while (permutate_vec(&numbers));
+    } while (std::next_permutation(numbers.begin(), numbers.end()));
+
+    print_vec(permutate_vec(numbers));
 
     return std::make_pair(operandNumbers, cases);
 }
@@ -239,5 +272,3 @@ void print_answer(std::vector<std::string> soal, std::vector<int> answer)
     std::cout << std::endl;
     print_vec(answer);
 }
-
-// *** END ***

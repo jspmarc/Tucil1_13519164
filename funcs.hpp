@@ -15,6 +15,8 @@
 #define debug1() puts("males belajar tapi...")
 #define debug2() puts("pengen kaya")
 #define debug3() puts("haha lucu lo badut")
+#define cel() std::cout << std::endl
+
 
 // *** DEKLARASI FUNGSI-FUNGSI ***
 
@@ -22,11 +24,22 @@
  * Fungsi untuk membuat permutasi dari suatu vektor
  *
  * @tparam T tipe data yang disimpan pada vektor
- * @param *vec pointer ke vektor yang ingin dibuat permutasinya
- * @returns true jika merupakan permutasi baru, false jika sudah kembali ke bentuk vektor awal
+ * @param vec vektor yang ingin dibuat permutasinya
+ * @returns vektor yg berisi vektor-vektor hasil permutasi
  */
-template <class T>
-bool permutate_vec(std::vector<T>* vec);
+template <typename T>
+std::vector<std::vector<T>> permutate_vec(std::vector<T> vec);
+
+/**
+ * Fungsi untuk memotong vektor ( membuat vektor baru dengan elemen [n..m) )
+ *
+ * @param n indeks elemen pertama yg ingin diambil (inklusif)
+ * @param m satu indeks setelah elemen terakhir yg ingin diambil (ekslusif)
+ * @param vec vektor yang ingin dipotong
+ * @returns potongan vektor vec di indeks [n..m)
+ */
+template <typename T>
+std::vector<T> slice_vector(int n, int m, std::vector<T> vec);
 
 /**
  * Fungsi untuk menghapuskan whitespaces ('', '\t', '\n') dari awal C string
@@ -43,7 +56,7 @@ std::string strip_at_beginning(char* strToStrip);
  * @tparam T tipe data elemen yang ditampung vector
  * @param vec vector yang ingin dituliskan isinya
  */
-template <class T>
+template <typename T>
 void print_vec(std::vector<T> vec);
 
 /**
@@ -61,7 +74,7 @@ void print_vec(std::vector<T> vec);
  *
  * @overload
  */
-template <class T>
+template <typename T>
 void print_vec(std::vector<std::vector<T>> vec);
 
 /**
@@ -73,7 +86,7 @@ void print_vec(std::vector<std::vector<T>> vec);
  * @tparam V tipe data untuk value pada unordered_map
  * @param umap unordered_map yang ingin dituliskan isinya
  */
-template <class K, class V>
+template <typename K, typename V>
 void print_map(std::unordered_map<K, V> umap);
 
 /**
