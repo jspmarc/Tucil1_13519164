@@ -6,9 +6,15 @@
 #ifndef _TUCIL_1_STIMA_
 #define _TUCIL_1_STIMA_
 
+#include <utility>
 #include <vector> // vector
 #include <iostream> // string, cout
 #include <unordered_map> // unordered_map
+
+#define MAX_UNIQUE_LETTERS 80
+#define debug1() puts("males belajar tapi...")
+#define debug2() puts("pengen kaya")
+#define debug3() puts("haha lucu lo badut")
 
 // *** DEKLARASI FUNGSI-FUNGSI ***
 
@@ -85,7 +91,7 @@ void parse_file(char* fileName, std::vector<std::vector<std::string>>* output);
  *
  * @param soal soal yang mau didekripsi
  */
-std::vector<int> decrypt_cryparithm(std::vector<std::string> soal);
+std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soal);
 
 /**
  * Fungsi untuk mendapatkan huruf-huruf unik dari soal
