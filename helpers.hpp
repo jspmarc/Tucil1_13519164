@@ -1,7 +1,21 @@
+/* Nama     : Josep Marcello
+ * NIM      : 13519164
+ * Tanggal  : 20 Januari 2021
+ */
+
+#ifndef _TUCIL_1_STIMA_
+#define _TUCIL_1_STIMA_
+
 #include <iostream> // string
 #include <vector> // vector
 #include <unordered_map> // unordered_map
 #include <utility> // pair
+
+#define MAX_UNIQUE_LETTERS 10
+#define debug1() puts("males belajar tapi...")
+#define debug2() puts("pengen kaya")
+#define debug3() puts("haha lucu lo badut")
+#define cel() puts("")
 
 /**
  * Fungsi untuk memotong vektor ( membuat vektor baru dengan elemen [n..m) )
@@ -73,16 +87,6 @@ void print_map(std::unordered_map<K, V> umap);
 void parse_file(char* fileName, std::vector<std::vector<std::string>>* output);
 
 /**
- * Fungsi untuk mendekripsi Cryptarithmetic
- *
- * @param soal soal yang mau didekripsi
- * @param permutatedNumbers vektor berisi vektor-vektor kumpulan
- * permutasi-permutasi yang mungkin dari vektor angka [0..MAX_UNIQUE_LETTERS]
- * @returns sebuah pair berisi solusi benar dan jumlah kasus yang dikerjakan
- */
-std::pair<std::unordered_map<char, int>, int> decrypt_cryparithm(std::vector<std::string> soal, std::vector<std::vector<int>> permutatedNumbers);
-
-/**
  * Fungsi untuk mendapatkan huruf-huruf unik dari soal
  *
  * @param soal soal yang ingin dicari huruf-huruf uniknya
@@ -96,3 +100,5 @@ std::vector<char> unique_letters(std::vector<std::string> soal);
  * @param answer jawaban dari soal yang ingin diprint, hasil decrypt_cryparithm()
  */
 void print_answer(std::vector<std::string> soal, std::unordered_map<char, int> answer);
+
+#endif
