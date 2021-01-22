@@ -9,24 +9,13 @@
 #include <iostream> // string
 #include <vector> // vector
 #include <unordered_map> // unordered_map
-#include <utility> // pair
+#include <stdio.h> // puts()
 
 #define MAX_UNIQUE_LETTERS 10
 #define debug1() puts("males belajar tapi...")
 #define debug2() puts("pengen kaya")
 #define debug3() puts("haha lucu lo badut")
 #define cel() puts("")
-
-/**
- * Fungsi untuk memotong vektor ( membuat vektor baru dengan elemen [n..m) )
- *
- * @param n indeks elemen pertama yg ingin diambil (inklusif)
- * @param m satu indeks setelah elemen terakhir yg ingin diambil (ekslusif)
- * @param vec vektor yang ingin dipotong
- * @returns potongan vektor vec di indeks [n..m)
- */
-template <typename T>
-std::vector<T> slice_vector(int n, int m, std::vector<T> vec);
 
 /**
  * Fungsi untuk menghapuskan whitespaces ('', '\t', '\n') dari awal C string
@@ -99,6 +88,6 @@ std::vector<char> unique_letters(std::vector<std::string> soal);
  * @param soal vektor yang berisi soal yang ingin diprint, hasil parse parse_file()
  * @param answer jawaban dari soal yang ingin diprint, hasil decrypt_cryparithm()
  */
-void print_answer(std::vector<std::string> soal, std::unordered_map<char, int> answer);
+void print_answer(std::vector<std::string> soal, std::vector< int> answer);
 
 #endif

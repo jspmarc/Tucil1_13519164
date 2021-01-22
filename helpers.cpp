@@ -8,16 +8,9 @@
 #include <vector> // vector
 #include <stdlib.h> // exit()
 #include <sysexits.h> // exit codes
-#include <stdio.h> // printf(), puts()
-#include <iostream> // string, cout
+#include <iostream> // string, cout, cerr
 #include <unordered_map> // unordered_map
 #include <fstream> // file operation
-
-template <typename T>
-std::vector<T> slice_vector(int n, int m, std::vector<T> vec)
-{
-    return std::vector<T> (vec.begin()+n, vec.begin()+m);
-}
 
 std::string strip_at_beginning(char* strToStrip)
 {
@@ -142,9 +135,27 @@ std::vector<char> unique_letters(std::vector<std::string> soal)
     return letters;
 }
 
-void print_answer(std::vector<std::string> soal, std::unordered_map<char, int> answer)
+void print_answer(std::vector<std::string> soal, std::vector<int> answer)
 {
-    print_vec(soal);
-    std::cout << '\n';
-    print_map(answer);
+    size_t longest = 0;
+    for (std::string operand: soal)
+        longest < operand.size() ? operand.size() : longest;
+
+    std::string soal_out = soal[0],
+                answer_out = std::to_string(answer[0]);
+    for (size_t i = 1; i < soal.size()-1; ++i)
+    {
+        soal_out.append(" + ");
+        soal_out.append(soal[i]);
+
+        answer_out.append(" + ");
+        answer_out.append(std::to_string(answer[i]));
+    }
+    soal_out.append(" = ");
+    soal_out.append(soal.back());
+
+    answer_out.append(" = ");
+    answer_out.append(std::to_string(answer.back()));
+
+    std::cout << soal_out << '\n' << answer_out << "\n";
 }

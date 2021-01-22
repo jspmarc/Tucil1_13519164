@@ -1,3 +1,5 @@
+import time
+
 def perm1(lst: list) -> list:
     if len(lst) == 0:
         return []
@@ -35,6 +37,14 @@ def newPerm(length: int, batas_bawah: int, batas_atas:int) -> list[list]:
                 l.append(p + [i])
     return l
 
+start_time = time.time()
 l = newPerm(10, 0, 10)
-print(l)
-print(len(l))
+end_time = time.time()
+print(l[0:50])
+print(len(l), f'"optimized" took {end_time-start_time}s')
+
+start_time = time.time()
+l = perm1(list(range(10)))
+end_time = time.time()
+print(l[0:50])
+print(len(l), f'took {end_time-start_time}s')

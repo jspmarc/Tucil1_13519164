@@ -44,7 +44,7 @@ bool is_duplicate_number(std::vector<int> vec, int dup);
  * @param soal soal yang mau didekripsi
  * @returns sebuah pair berisi solusi benar dan jumlah kasus yang dikerjakan
  */
-std::pair<std::unordered_map<char, int>, int> decrypt_cryparithm(std::vector<std::string> soal);
+std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soal);
 
 // *** END ***
 
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
     std::chrono::steady_clock sc;
 
     /// Vektor untuk menyimpan semua jawaban
-    std::vector<std::unordered_map<char, int>> answers(semuaSoal.size());
+    std::vector<std::vector<int>> answers(semuaSoal.size());
 
     /// awal perhitungan waktu semua soal
     auto start = sc.now();
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
         /// jumlah kasus yg diuji
         int cases;
 
-        std::pair<std::unordered_map<char, int>, int> result;
+        std::pair<std::vector<int>, int> result;
 
         // dekripsi dan tuliskan hasil
         result = decrypt_cryparithm(*it);
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
     auto end = sc.now();
     auto timeSpend = static_cast<std::chrono::duration<double>>(end-start);
 
-    printf("Total waktu eksekusi dekripsi %lu soal dan menuliskan output membutuhkan %lf detik.\n",
+    printf("Total waktu eksekusi dekripsi %lu soal dan menuliskan output adalah %lf detik.\n",
             semuaSoal.size(), timeSpend.count());
 }
 
@@ -194,10 +194,12 @@ bool is_duplicate_number(std::vector<int> vec, int dup)
     return usedNumbers[dup];
 }
 
-std::pair<std::unordered_map<char, int>, int> decrypt_cryparithm(std::vector<std::string> soal)
+std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soal)
 {
     // proses perisapan dan inisialisasi
 
+    /// vektor u/ nampung operands yg udh diubah ke dalam bentuk bilangan
+    std::vector<int> operandInNumbers(soal.size());
     /// vektor untuk menyimpan huruf-huruf unik
     std::vector<char> letters = unique_letters(soal);
     /// vektor untuk menyimpan huruf pertama dari tiap operand
@@ -227,6 +229,7 @@ std::pair<std::unordered_map<char, int>, int> decrypt_cryparithm(std::vector<std
     // proses dekripsi
     for (std::vector<int> numbers: permutatedNumbers)
     {
+        operandInNumbers.clear();
         // map huruf ke angka
         // dan angka ke huruf
         for (size_t i = 0; i < letters.size(); ++i)
@@ -260,11 +263,13 @@ std::pair<std::unordered_map<char, int>, int> decrypt_cryparithm(std::vector<std
                 sum += curNum;
             else
                 realSum = curNum;
+
+            operandInNumbers.push_back(curNum);
         }
 
         if (sum == realSum) break;
         else cases++;
     }
 
-    return std::make_pair(numberFromLetter, cases);
+    return std::make_pair(operandInNumbers, cases);
 }

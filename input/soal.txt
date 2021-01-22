@@ -1,18 +1,28 @@
- SEND
- MORE+
-------
-MONEY
-
-FORTY
-  TEN
-  TEN+
-------
-SIXTY
-
 NUMBER
 NUMBER+
 -------
 PUZZLE
+
+  TILES
+PUZZLES+
+--------
+PICTURE
+
+ CLOCK
+  TICK
+  TOCK+
+-------
+PLANET
+
+ COCA
+ COLA+
+------
+OASIS
+
+ HERE
+  SHE+
+------
+COMES
 
 DOUBLE
 DOUBLE
@@ -20,20 +30,26 @@ DOUBLE
 -------
 TROUBLE
 
-THREE
-THREE
-  TWO
-  TWO
-  ONE+
-------
+  NO
+ GUN
+  NO+
+-----
+HUNT
+
+ THREE
+ THREE
+   TWO
+   TWO
+   ONE+
+-------
 ELEVEN
 
-  TILES
-PUZZLES+
---------
-PICTURE
+ CROSS
+ ROADS+
+-------
+DANGER
 
-CT
- A+
----
-CC
+ MEMO
+ FROM+
+------
+HOMER

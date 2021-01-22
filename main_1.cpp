@@ -6,9 +6,9 @@
 #include <chrono> // itung waktu eksekusi
 #include <utility> // pairs
 #include <vector> // vector
-#include <stdlib.h> // exit()
+#include <stdlib.h> // exit(), free(), malloc()
 #include <sysexits.h> // exit codes
-#include <stdio.h> // printf(), puts()
+#include <stdio.h> // printf(), puts(), fscanf, scanf
 #include <iostream> // string, cout
 #include <unordered_map> // unordered_map
 #include "helpers.hpp"
@@ -41,7 +41,7 @@ std::vector<std::vector<int>> generate_permutated_numbers(int lim);
  * permutasi-permutasi yang mungkin dari vektor angka [0..MAX_UNIQUE_LETTERS]
  * @returns sebuah pair berisi solusi benar dan jumlah kasus yang dikerjakan
  */
-std::pair<std::unordered_map<char, int>, int> decrypt_cryparithm(std::vector<std::string> soal, std::vector<std::vector<int>> permutatedNumbers);
+std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soal, std::vector<std::vector<int>> permutatedNumbers);
 
 // *** END ***
 
@@ -53,7 +53,7 @@ int main(int argc, char *argv[])
     if (argc != 2)
     {
         /*
-        fscanf(stderr, "Penggunaan: %s [nama file soal]\n", argv[0]);
+        fprintnf(stderr, "Penggunaan: %s [nama file soal]\n", argv[0]);
         exit(EX_USAGE);
         */
 
@@ -72,7 +72,7 @@ int main(int argc, char *argv[])
     std::chrono::steady_clock sc;
 
     /// Vektor untuk menyimpan semua jawaban
-    std::vector<std::unordered_map<char, int>> answers(semuaSoal.size());
+    std::vector<std::vector<int>> answers(semuaSoal.size());
 
     /// awal perhitungan waktu semua soal
     auto start = sc.now();
@@ -80,6 +80,8 @@ int main(int argc, char *argv[])
     std::vector<std::vector<int>> permutatedNumbers = generate_permutated_numbers(MAX_UNIQUE_LETTERS);
     /// akhir perhitungan waktu pembuatan permutasi list
     auto permEnd = sc.now();
+    auto permTS = static_cast<std::chrono::duration<double>>(permEnd-start);
+    printf("Waktu pembuatan semua kemungkinan permutasi adalah: %lf.\n\n", permTS.count());
     for (std::vector<std::vector<std::string>>::iterator it =
             semuaSoal.begin(); it != semuaSoal.end(); ++it)
     {
@@ -91,7 +93,7 @@ int main(int argc, char *argv[])
         /// jumlah kasus yg diuji
         int cases;
 
-        std::pair<std::unordered_map<char, int>, int> result;
+        std::pair<std::vector<int>, int> result;
 
         // dekripsi dan tuliskan hasil
         result = decrypt_cryparithm(*it, permutatedNumbers);
@@ -111,10 +113,8 @@ int main(int argc, char *argv[])
     // akhir perhitungan waktu semua soal
     auto end = sc.now();
     auto timeSpend = static_cast<std::chrono::duration<double>>(end-start);
-    auto permTS = static_cast<std::chrono::duration<double>>(permEnd-start);
 
-    printf("Waktu pembuatan semua kemungkinan permutasi adalah: %lf\n.", permTS.count());
-    printf("Total waktu permutasi, eksekusi dekripsi %lu soal, dan menuliskan output membutuhkan %lf detik.\n",
+    printf("Total waktu permutasi, eksekusi dekripsi %lu soal, dan menuliskan output adalah %lf detik.\n",
             semuaSoal.size(), timeSpend.count());
 }
 
@@ -123,7 +123,7 @@ std::vector<std::vector<T>> permutate_vec(std::vector<T> vec)
 {
     /* KODE PYTHON
      * ```py
-        def permutate_list(lst: list) -> list:
+        def permutate_list(lst: list) -> list[list]:
             if len(lst) == 0:
                 return []
             elif len(lst) == 1:
@@ -131,9 +131,9 @@ std::vector<std::vector<T>> permutate_vec(std::vector<T> vec)
             elif len(lst) == 2:
                 return [lst, [lst[1], lst[0]]]
             else:
-                l = []
+                l: list = []
                 pivot = lst[0]
-                permutated = perm1(lst[1:])
+                permutated: list[list] = perm1(lst[1:])
                 for p in permutated:
                     for i in range(len(p)+1):
                         l.append(p[:i] + [pivot] + p[i:])
@@ -150,20 +150,21 @@ std::vector<std::vector<T>> permutate_vec(std::vector<T> vec)
     /// elemen pertama vektor
     T first = vec[0];
     /// sisa elemen vektor
-    std::vector<T> rest(vec.size()-1);
-    std::copy(vec.begin()+1, vec.end(), rest.begin());
-    /// tail yang sudha dipermutasi
+    std::vector<T> rest(vec.begin()+1, vec.end());
+    /// tail yang sudah dipermutasi
     std::vector<std::vector<T>> permutated = permutate_vec(rest);
 
-    // p harusnya std::vector<std::vector<T>>::iterator
-    for (auto p = permutated.begin(); p != permutated.end(); ++p)
+    // tambahin first ke setiap hasil permutasi tail
+
+    /// elemen dari permutated (tail yang sudah dipermutasi)
+    for (std::vector<T> p: permutated)
     {
-        for (size_t i = 0; i < p->size() + 1; ++i)
+        for (size_t i = 0; i < p.size() + 1; ++i)
         {
             /// vektor yang akan dipush ke newVec
-            std::vector<T> toBePushed(p->begin(), p->begin()+i);
+            std::vector<T> toBePushed(p.begin(), p.begin()+i);
             toBePushed.push_back(first);
-            toBePushed.insert(toBePushed.end(), p->begin()+i, p->end());
+            toBePushed.insert(toBePushed.end(), p.begin()+i, p.end());
 
             newVec.push_back(toBePushed);
         }
@@ -176,8 +177,8 @@ std::vector<std::vector<int>> generate_permutated_numbers(int lim)
 {
 
     /// vektor untuk menyimpan angka-angka pada vektor
-    std::vector<int> numbers(10);
-    for (int i = 0; i < 10; ++i)
+    std::vector<int> numbers(lim);
+    for (int i = 0; i < lim; ++i)
         numbers[i] = i;
 
     std::vector<std::vector<int>> hasil = permutate_vec(numbers);
@@ -185,7 +186,7 @@ std::vector<std::vector<int>> generate_permutated_numbers(int lim)
     return hasil;
 }
 
-std::pair<std::unordered_map<char, int>, int> decrypt_cryparithm(std::vector<std::string> soal, std::vector<std::vector<int>> permutatedNumbers)
+std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soal, std::vector<std::vector<int>> permutatedNumbers)
 {
     // proses perisapan dan inisialisasi
 
@@ -195,7 +196,7 @@ std::pair<std::unordered_map<char, int>, int> decrypt_cryparithm(std::vector<std
     std::vector<char> firstLetters(soal.size());
     /// unordered_map yang memetakan huruf ke angka
     std::unordered_map<char, int> numberFromLetter;
-    /// unordered_map yan memetakan angka ke huruf (kebalikan numberFromLetter)
+    /// counter jumlah kasus
     int cases = 0;
 
     // bikin vektor huruf pertama
@@ -212,9 +213,15 @@ std::pair<std::unordered_map<char, int>, int> decrypt_cryparithm(std::vector<std
         exit(EX_DATAERR);
     }
 
+    /// vektor u/ nampung operands yg udh diubah ke dalam bentuk bilangan
+    std::vector<int> operandInNumbers(soal.size());
+
     // proses dekripsi
+
+    /// numbers vektor yang berisi angka [0..9] yang sudah dipermutasi
     for (std::vector<int> numbers: permutatedNumbers)
     {
+        operandInNumbers.clear();
         // map huruf ke angka
         // dan angka ke huruf
         for (size_t i = 0; i < letters.size(); ++i)
@@ -224,11 +231,7 @@ std::pair<std::unordered_map<char, int>, int> decrypt_cryparithm(std::vector<std
 
         /// Penanda apakah loop perlu dilanjutkan atau tidak
         bool stopThyLoop = false;
-        for (std::vector<char>::iterator it = firstLetters.begin();
-                it != firstLetters.end() && !stopThyLoop;
-                ++it)
-            if (numberFromLetter[*it] == 0)
-                stopThyLoop = true;
+        for (char c: firstLetters) stopThyLoop = numberFromLetter[c] == 0;
 
         if (stopThyLoop) continue;
 
@@ -248,11 +251,13 @@ std::pair<std::unordered_map<char, int>, int> decrypt_cryparithm(std::vector<std
                 sum += curNum;
             else
                 realSum = curNum;
+
+            operandInNumbers.push_back(curNum);
         }
 
         if (sum == realSum) break;
         else cases++;
     }
 
-    return std::make_pair(numberFromLetter, cases);
+    return std::make_pair(operandInNumbers, cases);
 }
