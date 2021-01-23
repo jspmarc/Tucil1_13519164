@@ -88,6 +88,6 @@ std::vector<char> unique_letters(std::vector<std::string> soal);
  * @param soal vektor yang berisi soal yang ingin diprint, hasil parse parse_file()
  * @param answer jawaban dari soal yang ingin diprint, hasil decrypt_cryparithm()
  */
-void print_answer(std::vector<std::string> soal, std::vector< int> answer);
+void print_answer(std::vector<std::string> soal, std::vector<int> answer);
 
 #endif

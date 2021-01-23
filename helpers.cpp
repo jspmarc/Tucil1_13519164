@@ -53,7 +53,7 @@ void print_map(std::unordered_map<K, V> umap)
 
 void parse_file(char* fileName, std::vector<std::vector<std::string>>* output)
 {
-    /// variabel untuk menyimmpan file
+    /// variabel untuk menyimpan file
     std::fstream input;
     input.open(fileName, std::ios::in);
 

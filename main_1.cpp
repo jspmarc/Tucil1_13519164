@@ -8,7 +8,7 @@
 #include <vector> // vector
 #include <stdlib.h> // exit(), free(), malloc()
 #include <sysexits.h> // exit codes
-#include <stdio.h> // printf(), puts(), fscanf, scanf
+#include <stdio.h> // printf(), puts(), scanf()
 #include <iostream> // string, cout
 #include <unordered_map> // unordered_map
 #include "helpers.hpp"
@@ -26,8 +26,14 @@ template <typename T>
 std::vector<std::vector<T>> permutate_vec(std::vector<T> vec);
 
 /**
- * Fungsi untuk menghasilkan list dari permutasi-permutasi mungkin dari
- * angka-angka dalam range [0..lim]
+ * Fungsi untuk menghasilkan enumerasi permutasi-permutasi yang mungkin dari
+ * angka-angka dalam range [0..lim)
+ *
+ * Mis: lim = 2, maka output:
+ * [[0,1], [1,0]]
+ *
+ * lim = 3:
+ * [[0,1,2], [0,2,1], [1,0,2], [1,2,0], [2,0,1], [2,1,0]]
  *
  * @param lim batas atas angka
  */
@@ -50,7 +56,7 @@ int main(int argc, char *argv[])
     /// Vektor untuk nyimpen semua soal
     std::vector<std::vector<std::string>> semuaSoal;
 
-    if (argc != 2)
+    if (argc == 1)
     {
         /*
         fprintnf(stderr, "Penggunaan: %s [nama file soal]\n", argv[0]);
@@ -93,10 +99,8 @@ int main(int argc, char *argv[])
         /// jumlah kasus yg diuji
         int cases;
 
-        std::pair<std::vector<int>, int> result;
-
         // dekripsi dan tuliskan hasil
-        result = decrypt_cryparithm(*it, permutatedNumbers);
+        std::pair<std::vector<int>, int> result = decrypt_cryparithm(*it, permutatedNumbers);
         answers[i] = result.first;
         cases = result.second;
 
@@ -121,26 +125,6 @@ int main(int argc, char *argv[])
 template <typename T>
 std::vector<std::vector<T>> permutate_vec(std::vector<T> vec)
 {
-    /* KODE PYTHON
-     * ```py
-        def permutate_list(lst: list) -> list[list]:
-            if len(lst) == 0:
-                return []
-            elif len(lst) == 1:
-                return [lst]
-            elif len(lst) == 2:
-                return [lst, [lst[1], lst[0]]]
-            else:
-                l: list = []
-                pivot = lst[0]
-                permutated: list[list] = perm1(lst[1:])
-                for p in permutated:
-                    for i in range(len(p)+1):
-                        l.append(p[:i] + [pivot] + p[i:])
-
-                return l
-     * ```
-     */
     if (vec.size() == 0) return {{}};
     else if (vec.size() == 1) return {vec};
     else if (vec.size() == 2) return {vec, {vec[1], vec[0]}};
@@ -150,9 +134,9 @@ std::vector<std::vector<T>> permutate_vec(std::vector<T> vec)
     /// elemen pertama vektor
     T first = vec[0];
     /// sisa elemen vektor
-    std::vector<T> rest(vec.begin()+1, vec.end());
+    //std::vector<T> rest(vec.begin()+1, vec.end());
     /// tail yang sudah dipermutasi
-    std::vector<std::vector<T>> permutated = permutate_vec(rest);
+    std::vector<std::vector<T>> permutated = permutate_vec(std::vector<T>(vec.begin()+1, vec.end()));
 
     // tambahin first ke setiap hasil permutasi tail
 
@@ -223,7 +207,6 @@ std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soa
     {
         operandInNumbers.clear();
         // map huruf ke angka
-        // dan angka ke huruf
         for (size_t i = 0; i < letters.size(); ++i)
             numberFromLetter[letters[i]] = numbers[i];
 

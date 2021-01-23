@@ -29,16 +29,6 @@
 std::vector<std::vector<int>> new_perm(int length, int batasBawah, int batasAtas);
 
 /**
- * fungsi untuk mencari angka duplikat di dalam vektor,
- * dibatasi sampai 10 angka [0..9]
- *
- * @param vec vektor yang ingin dicari duplikat
- * @param dup angka yang ingin dicari duplikatnya
- * @returns true jika dup merupakan angka duplikat di vec
- */
-bool is_duplicate_number(std::vector<int> vec, int dup);
-
-/**
  * Fungsi untuk mendekripsi Cryptarithmetic
  *
  * @param soal soal yang mau didekripsi
@@ -117,29 +107,6 @@ int main(int argc, char *argv[])
 
 std::vector<std::vector<int>> new_perm(int length, int batasBawah, int batasAtas)
 {
-    /*
-     * Kode Python:
-     * ```py
-        def newPerm(length: int, batas_bawah: int, batas_atas:int) -> list[list]:
-            if (length == 0):
-                return []
-            elif (length == 1):
-                l = [i for i in range(batas_bawah, batas_atas)]
-                return [l]
-            elif (length == 2):
-                l = [[i, j] for i in range(batas_bawah, batas_atas) for j in range(batas_bawah, batas_atas) if i != j]
-                return l
-
-            # else
-            perm = newPerm(length-1, batas_bawah, batas_atas)
-            l = []
-            for p in perm:
-                for i in range(batas_bawah, batas_atas):
-                    if not (i in p):
-                        l.append(p + [i])
-            return l
-     * ```
-     */
     if (length == 0) return {{}};
     if (length == 1)
     {
@@ -152,13 +119,9 @@ std::vector<std::vector<int>> new_perm(int length, int batasBawah, int batasAtas
     {
         std::vector<std::vector<int>> numbers;
         for (int i = batasBawah; i < batasAtas; ++i)
-        {
             for (int j = batasBawah; j < batasAtas; ++j)
-            {
                 if (i != j)
                     numbers.push_back({i, j});
-            }
-        }
 
         return numbers;
     }
@@ -167,9 +130,15 @@ std::vector<std::vector<int>> new_perm(int length, int batasBawah, int batasAtas
     std::vector<std::vector<int>> l;
     for (std::vector<int> p: perm)
     {
+        bool numbersInVec[] = {
+            false, false, false, false, false,
+            false, false, false, false, false
+        };
+        for (int i: p) numbersInVec[i] = true;
+
         for (int i = batasBawah; i < batasAtas; ++i)
         {
-            if (!is_duplicate_number(p, i))
+            if (!numbersInVec[i])
             {
                 std::vector<int> temp(p.size());
                 std::copy(p.begin(), p.end(), temp.begin());
@@ -180,18 +149,6 @@ std::vector<std::vector<int>> new_perm(int length, int batasBawah, int batasAtas
     }
 
     return l;
-}
-
-bool is_duplicate_number(std::vector<int> vec, int dup)
-{
-    bool usedNumbers[] = {
-        false, false, false, false, false,
-        false, false, false, false, false
-    };
-
-    for (int i: vec) usedNumbers[i] = true;
-
-    return usedNumbers[dup];
 }
 
 std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soal)
