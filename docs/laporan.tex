@@ -1,0 +1,75 @@
+\documentclass{article}
+
+\usepackage[parfill]{parskip}
+\usepackage{
+  geometry,
+  float,
+  listings,
+  xcolor,
+  amsmath,
+  fontspec,
+}
+
+% To keep figures, listings, and tables rendered where they're put
+% *** BEGIN ***
+\let\origfigure\figure
+\let\endorigfigure\endfigure
+\renewenvironment{figure}[1][2] {
+    \expandafter\origfigure\expandafter[H]
+} {
+    \endorigfigure
+}
+
+\AtBeginDocument{\floatplacement{codelisting}{H}}
+\AtBeginDocument{\floatplacement{table}{H}}
+% *** END ***
+
+\geometry{
+  top = 20mm,
+  bottom = 20mm,
+  left = 25mm,
+  right = 25mm,
+  paper = a4paper,
+}
+
+\setmainfont{Times New Roman}
+\setmonofont{JetBrainsMono Nerd Font Mono}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{% https://en.wikibooks.org/wiki/LaTeX/Source_Code_Listings
+  basicstyle = \footnotesize\ttfamily,
+  breakatwhitespace = true,
+  breaklines = true,
+  frame = single,
+  firstnumber = 1,
+  keepspaces = true,
+  numbers = left,
+  tabsize = 4,
+  backgroundcolor=\color{backcolour},
+  commentstyle=\color{codegray},
+  keywordstyle=\color{orange},
+  numberstyle=\tiny\color{codegray},
+  stringstyle=\color{codegreen},
+  basicstyle=\ttfamily\footnotesize,
+}
+
+% https://github.com/gilangardya/if2211-cryptarithmetic-solver/blob/master/doc/LaporanTucil1.pdf
+
+\begin{document}
+\begin{titlepage}
+
+\end{titlepage}
+
+\begin{lstlisting}[caption = "helpers.hpp", language = c++]
+\end{lstlisting}
+
+\begin{lstlisting}[caption = "helpers.cpp", language = c++]
+\end{lstlisting}
+
+\begin{lstlisting}[caption = "main.cpp", language = c++]
+\end{lstlisting}
+\end{document}

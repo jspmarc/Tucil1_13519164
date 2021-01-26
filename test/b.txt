@@ -1,0 +1,39 @@
+ SEND
+ MORE+
+------
+MONEY
+
+FORTY
+  TEN
+  TEN+
+------
+SIXTY
+
+NUMBER
+NUMBER+
+-------
+PUZZLE
+
+DOUBLE
+DOUBLE
+  TOIL+
+-------
+TROUBLE
+
+THREE
+THREE
+  TWO
+  TWO
+  ONE+
+------
+ELEVEN
+
+  TILES
+PUZZLES+
+--------
+PICTURE
+
+CT
+ A+
+---
+CC
