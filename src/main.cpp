@@ -11,7 +11,13 @@
 #include <stdio.h> // printf(), puts(), scanf()
 #include <iostream> // string, cout
 #include <unordered_map> // unordered_map
-#include "headers/helpers.hpp"
+#include <fstream> // file ops
+
+#define MAX_UNIQUE_LETTERS 10
+#define debug1() puts("males belajar tapi...")
+#define debug2() puts("pengen kaya")
+#define debug3() puts("udah stres")
+#define cel() puts("")
 
 // *** DEKLARASI FUNGSI-FUNGSI ***
 
@@ -63,6 +69,24 @@ std::vector<char> unique_letters(std::vector<std::string> soal);
  * @param answer jawaban dari soal yang ingin diprint, hasil decrypt_cryparithm()
  */
 void print_answer(std::vector<std::string> soal, std::vector<int> answer);
+
+/**
+ * Fungsi untuk membaca file (sesuai format pada spek) lalu memisahkannya
+ * berdasarkan soal
+ *
+ * @param *fileName string yang berisi nama file soal
+ * @param *output vector dari vector yang menampung soal-soal (tiap elemen
+ * adalah soal)
+ */
+void parse_file(char* fileName, std::vector<std::vector<std::string>>* output);
+
+/**
+ * Fungsi untuk menghapuskan whitespaces ('', '\t', '\n') dari awal C string
+ *
+ * @param *strToStrip pointer ke C string yang ingin di-strip
+ * @returns std::string yang sudah dihapuskan whitespace-nya
+ */
+std::string strip_at_beginning(char* strToStrip);
 
 // *** END ***
 
@@ -272,14 +296,14 @@ std::vector<char> unique_letters(std::vector<std::string> soal)
         false, false, false, false, false, false
     };
 
-    for (std::vector<std::string>::iterator it = soal.begin(); it != soal.end(); ++it)
+    for (std::string operand: soal)
     {
-        for (std::string::iterator it_c = it->begin(); it_c != it->end(); ++it_c)
+        for (char c: operand)
         {
-            if (!areLettersUsed[*it_c - 'A'])
+            if (!areLettersUsed[c - 'A'])
             {
-                letters.push_back(*it_c);
-                areLettersUsed[*it_c - 'A'] = true;
+                letters.push_back(c);
+                areLettersUsed[c - 'A'] = true;
             }
         }
     }
@@ -333,4 +357,67 @@ void print_answer(std::vector<std::string> soal, std::vector<int> answer)
     for (size_t j = 0; j < longest - soal[soal.size()-1].size(); ++j) // ngasih spasi
         std::cout << " ";
     std::cout << answer[answer.size()-1] << '\n';
+}
+
+std::string strip_at_beginning(char* strToStrip)
+{
+    while ((*strToStrip == ' ' || *strToStrip == '\t' || *strToStrip == '\n')
+            && (*strToStrip != '\0')) strToStrip++;
+
+    return strToStrip;
+}
+
+void parse_file(char* fileName, std::vector<std::vector<std::string>>* output)
+{
+    /// variabel untuk menyimpan file
+    std::fstream input;
+    input.open(fileName, std::ios::in);
+
+    if (input.is_open())
+    {
+        /// menyimpan baris dari file yang lagi mau diparse
+        std::string line;
+
+        while(getline(input, line))
+        {
+            /// vektor buat nyimpen operand-operand yang dibaca
+            std::vector<std::string> operands;
+            /// buat ngecek masih ngerjain ngeparse soal atau bukan
+            bool isMasihParseSoal = true;
+            /// buat ngecek udah operand terakhir atau belum
+            bool isReadingLastOperand = false;
+
+            do
+            {
+                /// operand yang lagi dibaca, sesudah di-strip di depan
+                std::string operand = strip_at_beginning(&(line[0])).c_str();
+
+                if (isReadingLastOperand)
+                {
+                    isMasihParseSoal = false;
+                    operands.push_back(operand);
+                }
+                else if (operand.empty() || operand[0] == '-')
+                {
+                    isReadingLastOperand = operand[0] == '-';
+                    continue;
+                }
+                else if (*(operand.end()-1) == '+')
+                {
+                    operand.resize(operand.size()-1);
+                    operands.push_back(operand);
+                }
+                else operands.push_back(operand);
+            } while(isMasihParseSoal && getline(input, line));
+
+            output->push_back(operands);
+        }
+
+        input.close();
+    }
+    else
+    {
+        std::cerr << "Gagal membuka file " << fileName << ".\n";
+        exit(EX_NOINPUT);
+    }
 }

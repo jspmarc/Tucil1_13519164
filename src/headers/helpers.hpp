@@ -11,20 +11,6 @@
 #include <unordered_map> // unordered_map
 #include <stdio.h> // puts()
 
-#define MAX_UNIQUE_LETTERS 10
-#define debug1() puts("males belajar tapi...")
-#define debug2() puts("pengen kaya")
-#define debug3() puts("udah stres")
-#define cel() puts("")
-
-/**
- * Fungsi untuk menghapuskan whitespaces ('', '\t', '\n') dari awal C string
- *
- * @param *strToStrip pointer ke C string yang ingin di-strip
- * @returns std::string yang sudah dihapuskan whitespace-nya
- */
-std::string strip_at_beginning(char* strToStrip);
-
 /**
  * Fungsi untuk menuliskan isi vector
  * Format: [el1,el2,el3,el4,]
@@ -64,15 +50,5 @@ void print_vec(std::vector<std::vector<T>> vec);
  */
 template <typename K, typename V>
 void print_map(std::unordered_map<K, V> umap);
-
-/**
- * Fungsi untuk membaca file (sesuai format pada spek) lalu memisahkannya
- * berdasarkan soal
- *
- * @param *fileName string yang berisi nama file soal
- * @param *output vector dari vector yang menampung soal-soal (tiap elemen
- * adalah soal)
- */
-void parse_file(char* fileName, std::vector<std::vector<std::string>>* output);
 
 #endif
