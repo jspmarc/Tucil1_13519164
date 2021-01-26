@@ -64,10 +64,43 @@
 
 \begin{document}
 \begin{titlepage}
+  \centering
+  \vspace*{\stretch{2}}
+  \Large Laporan Tugas Kecil I
 
+  \large Dekripsi \textit{Cryptarithmetic} dengan \textit{Brute Force}
+
+  \normalsize
+
+  \vspace{\stretch{1}}
+
+  \includegraphics{stima-ss-4.png}
+
+  \vspace{\stretch{1}}
+  \begin{tabular}{lll}
+    Nama  &: & Josep Marcello \\
+    NIM &: & 13519164 \\
+    Kelas &: & K-03 \\
+    Dosen &: & Prof. Dwi Hendratmo Widyantoro \\
+    Bahasa &: & C++ \\
+  \end{tabular}
+
+  \vspace{\stretch{2}}
+  \large
+  PROGRAM STUDI TEKNIK INFORMATIKA
+
+  SEKOLAH TEKNIK ELEKTRO DAN INFORMATIKA
+
+  INSTITUT TEKNOLOGI BANDUNG
+
+  BANDUNG
+
+  2021
+
+  \vspace{\stretch{2}}
 \end{titlepage}
 
-\section{Algoritma Brute Force}
+\section{Algoritma \textit{Brute Force}}
 \begin{enumerate}
   \item Proses dekripsi \textit{cryptarithmetic} dimulai dengan pembuatan
     himpunan/matriks berukuran $10! \times 10$ yang berisi kemungkinan
@@ -109,199 +142,8 @@
     langkah 2.
 \end{enumerate}
 
-\section{Source Code Program}
-\begin{lstlisting}[caption = "helpers.hpp", language = c++]
-/* Nama     : Josep Marcello
- * NIM      : 13519164
- * Tanggal  : 20 Januari 2021
- */
-
-#ifndef _TUCIL_1_STIMA_
-#define _TUCIL_1_STIMA_
-
-#include <iostream> // string
-#include <vector> // vector
-#include <unordered_map> // unordered_map
-#include <stdio.h> // puts()
-
-#define MAX_UNIQUE_LETTERS 10
-#define debug1() puts("males belajar tapi...")
-#define debug2() puts("pengen kaya")
-#define debug3() puts("udah stres")
-#define cel() puts("")
-
-/**
- * Fungsi untuk menghapuskan whitespaces ('', '\t', '\n') dari awal C string
- *
- * @param *strToStrip pointer ke C string yang ingin di-strip
- * @returns std::string yang sudah dihapuskan whitespace-nya
- */
-std::string strip_at_beginning(char* strToStrip);
-
-/**
- * Fungsi untuk menuliskan isi vector
- * Format: [el1,el2,el3,el4,]
- *
- * @tparam T tipe data elemen yang ditampung vector
- * @param vec vector yang ingin dituliskan isinya
- */
-template <typename T>
-void print_vec(std::vector<T> vec);
-
-/**
- * Fungsi untuk menuliskan isi vector multidimensi
- * Format:
- * [
- *		[el11,el12,el13,el14,],
- *		[el21,el22,el23,el24,],
- *		[el31,el32,el33,el34,],
- *		[el41,el42,el43,el44,],
- * ]
- *
- * @tparam T tipe data elemen yang ditampung vector multidimensi
- * @param vec vector dari vector yang ingin dituliskan isinya
- *
- * @overload
- */
-template <typename T>
-void print_vec(std::vector<std::vector<T>> vec);
-
-/**
- * Fungsi untuk menuliskan isi suatu unordered_map
- * Format:
- * [<K1, V1>,<K2, V2>,]
- *
- * @tparam K tipe data untuk key pada unordered_map
- * @tparam V tipe data untuk value pada unordered_map
- * @param umap unordered_map yang ingin dituliskan isinya
- */
-template <typename K, typename V>
-void print_map(std::unordered_map<K, V> umap);
-
-/**
- * Fungsi untuk membaca file (sesuai format pada spek) lalu memisahkannya
- * berdasarkan soal
- *
- * @param *fileName string yang berisi nama file soal
- * @param *output vector dari vector yang menampung soal-soal (tiap elemen
- * adalah soal)
- */
-void parse_file(char* fileName, std::vector<std::vector<std::string>>* output);
-
-#endif
-\end{lstlisting}
-
-\begin{lstlisting}[caption = "helpers.cpp", language = c++]
-/* Nama     : Josep Marcello
- * NIM      : 13519164
- * Tanggal  : 20 Januari 2021
- */
-
-#include "headers/helpers.hpp"
-#include <utility> // pairs
-#include <vector> // vector
-#include <stdlib.h> // exit()
-#include <sysexits.h> // exit codes
-#include <iostream> // string, cout, cerr
-#include <unordered_map> // unordered_map
-#include <fstream> // file operation
-
-std::string strip_at_beginning(char* strToStrip)
-{
-    while ((*strToStrip == ' ' || *strToStrip == '\t' || *strToStrip == '\n')
-            && (*strToStrip != '\0')) strToStrip++;
-
-    return strToStrip;
-}
-
-template <typename T>
-void print_vec(std::vector<T> vec)
-{
-    std::cout << '[';
-    for (auto it = vec.begin(); it != vec.end(); ++it)
-        std::cout << *it << ',';
-    std::cout << ']';
-}
-
-template <typename T>
-void print_vec(std::vector<std::vector<T>> vec)
-{
-    std::cout << "[\n";
-    for (auto it = vec.begin(); it != vec.end(); ++it)
-    {
-        std::cout << '\t';
-        print_vec(*it);
-        std::cout << ",\n";
-    }
-    std::cout << ']';
-}
-
-template <typename K, typename V>
-void print_map(std::unordered_map<K, V> umap)
-{
-    std::cout << "[";
-    for (auto it = umap.begin(); it != umap.end(); ++it)
-        std::cout << '<' << it->first << ',' << it->second << ">,";
-    std::cout << "]";
-}
-
-void parse_file(char* fileName, std::vector<std::vector<std::string>>* output)
-{
-    /// variabel untuk menyimpan file
-    std::fstream input;
-    input.open(fileName, std::ios::in);
-
-    if (input.is_open())
-    {
-        /// menyimpan baris dari file yang lagi mau diparse
-        std::string line;
-
-        while(getline(input, line))
-        {
-            /// vektor buat nyimpen operand-operand yang dibaca
-            std::vector<std::string> operands;
-            /// buat ngecek masih ngerjain ngeparse soal atau bukan
-            bool isMasihParseSoal = true;
-            /// buat ngecek udah operand terakhir atau belum
-            bool isReadingLastOperand = false;
-
-            do
-            {
-                /// operand yang lagi dibaca, sesudah di-strip di depan
-                std::string operand = strip_at_beginning(&(line[0])).c_str();
-
-                if (isReadingLastOperand)
-                {
-                    isMasihParseSoal = false;
-                    operands.push_back(operand);
-                }
-                else if (operand.empty() || operand[0] == '-')
-                {
-                    isReadingLastOperand = operand[0] == '-';
-                    continue;
-                }
-                else if (*(operand.end()-1) == '+')
-                {
-                    operand.resize(operand.size()-1);
-                    operands.push_back(operand);
-                }
-                else operands.push_back(operand);
-            } while(isMasihParseSoal && getline(input, line));
-
-            output->push_back(operands);
-        }
-
-        input.close();
-    }
-    else
-    {
-        std::cerr << "Gagal membuka file " << fileName << ".\n";
-        exit(EX_NOINPUT);
-    }
-}
-\end{lstlisting}
-
-\begin{lstlisting}[caption = "main.cpp", language = c++]
+\section{\textit{Source Code} Program}
+\begin{lstlisting}[caption = main.cpp, language = c++]
 /* Nama     : Josep Marcello
  * NIM      : 13519164
  * Tanggal  : 20 Januari 2021
@@ -315,7 +157,13 @@ void parse_file(char* fileName, std::vector<std::vector<std::string>>* output)
 #include <stdio.h> // printf(), puts(), scanf()
 #include <iostream> // string, cout
 #include <unordered_map> // unordered_map
-#include "headers/helpers.hpp"
+#include <fstream> // file ops
+
+#define MAX_UNIQUE_LETTERS 10
+#define debug1() puts("males belajar tapi...")
+#define debug2() puts("pengen kaya")
+#define debug3() puts("udah stres")
+#define cel() puts("")
 
 // *** DEKLARASI FUNGSI-FUNGSI ***
 
@@ -367,6 +215,24 @@ std::vector<char> unique_letters(std::vector<std::string> soal);
  * @param answer jawaban dari soal yang ingin diprint, hasil decrypt_cryparithm()
  */
 void print_answer(std::vector<std::string> soal, std::vector<int> answer);
+
+/**
+ * Fungsi untuk membaca file (sesuai format pada spek) lalu memisahkannya
+ * berdasarkan soal
+ *
+ * @param *fileName string yang berisi nama file soal
+ * @param *output vector dari vector yang menampung soal-soal (tiap elemen
+ * adalah soal)
+ */
+void parse_file(char* fileName, std::vector<std::vector<std::string>>* output);
+
+/**
+ * Fungsi untuk menghapuskan whitespaces ('', '\t', '\n') dari awal C string
+ *
+ * @param *strToStrip pointer ke C string yang ingin di-strip
+ * @returns std::string yang sudah dihapuskan whitespace-nya
+ */
+std::string strip_at_beginning(char* strToStrip);
 
 // *** END ***
 
@@ -638,17 +504,80 @@ void print_answer(std::vector<std::string> soal, std::vector<int> answer)
         std::cout << " ";
     std::cout << answer[answer.size()-1] << '\n';
 }
+
+std::string strip_at_beginning(char* strToStrip)
+{
+    while ((*strToStrip == ' ' || *strToStrip == '\t' || *strToStrip == '\n')
+            && (*strToStrip != '\0')) strToStrip++;
+
+    return strToStrip;
+}
+
+void parse_file(char* fileName, std::vector<std::vector<std::string>>* output)
+{
+    /// variabel untuk menyimpan file
+    std::fstream input;
+    input.open(fileName, std::ios::in);
+
+    if (input.is_open())
+    {
+        /// menyimpan baris dari file yang lagi mau diparse
+        std::string line;
+
+        while(getline(input, line))
+        {
+            /// vektor buat nyimpen operand-operand yang dibaca
+            std::vector<std::string> operands;
+            /// buat ngecek masih ngerjain ngeparse soal atau bukan
+            bool isMasihParseSoal = true;
+            /// buat ngecek udah operand terakhir atau belum
+            bool isReadingLastOperand = false;
+
+            do
+            {
+                /// operand yang lagi dibaca, sesudah di-strip di depan
+                std::string operand = strip_at_beginning(&(line[0])).c_str();
+
+                if (isReadingLastOperand)
+                {
+                    isMasihParseSoal = false;
+                    operands.push_back(operand);
+                }
+                else if (operand.empty() || operand[0] == '-')
+                {
+                    isReadingLastOperand = operand[0] == '-';
+                    continue;
+                }
+                else if (*(operand.end()-1) == '+')
+                {
+                    operand.resize(operand.size()-1);
+                    operands.push_back(operand);
+                }
+                else operands.push_back(operand);
+            } while(isMasihParseSoal && getline(input, line));
+
+            output->push_back(operands);
+        }
+
+        input.close();
+    }
+    else
+    {
+        std::cerr << "Gagal membuka file " << fileName << ".\n";
+        exit(EX_NOINPUT);
+    }
+}
 \end{lstlisting}
 
 \section{Hasil Pengujian}
 
-\subsection{Input}
+\subsection{\textit{Input}}
 \begin{figure}
   \includegraphics{stima-ss-3.png}
   \caption{Masukan program (10 soal)}
 \end{figure}
 
-\subsection{Output}
+\subsection{\textit{Output}}
 \begin{figure}
   \includegraphics{stima-ss-1.png}
   \caption{Luaran program dekripsi untuk bagian permutasi dan soal 1 sampai 5}

@@ -326,9 +326,9 @@ void print_answer(std::vector<std::string> soal, std::vector<int> answer)
     }
     for (size_t j = 0; j < longest - soal[soal.size()-2].size(); ++j) // ngasih spasi
         std::cout << " ";
-    std::cout << soal[soal.size()-2] << " +\n";
+    std::cout << soal[soal.size()-2] << "+\n";
 
-    for (size_t i = 0; i < longest+2; ++i)
+    for (size_t i = 0; i < longest+1; ++i)
         std::cout << '-';
     std::cout << '\n';
 
@@ -348,9 +348,9 @@ void print_answer(std::vector<std::string> soal, std::vector<int> answer)
 
     for (size_t j = 0; j < longest - std::to_string(answer[answer.size()-2]).size(); ++j) // ngasih spasi
         std::cout << " ";
-    std::cout << answer[answer.size()-2] << " +\n";
+    std::cout << answer[answer.size()-2] << "+\n";
 
-    for (size_t i = 0; i < longest+2; ++i)
+    for (size_t i = 0; i < longest+1; ++i)
         std::cout << '-';
     std::cout << '\n';
 
