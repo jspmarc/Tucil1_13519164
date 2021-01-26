@@ -291,24 +291,46 @@ void print_answer(std::vector<std::string> soal, std::vector<int> answer)
 {
     size_t longest = 0;
     for (std::string operand: soal)
-        longest < operand.size() ? operand.size() : longest;
+        if (longest < operand.size()) longest = operand.size();
 
-    std::string strips = "";
-
-    for (size_t i = 0; i < longest; ++i)
-        strips.append("-");
 
     for (size_t i = 0; i < soal.size()-2; ++i)
+    {
+        for (size_t j = 0; j < longest - soal[i].size(); ++j) // ngasih spasi
+            std::cout << " ";
         std::cout << soal[i] << '\n';
-    std::cout << soal[soal.size()-2] << "  +\n";
-    std::cout << strips << '\n';
+    }
+    for (size_t j = 0; j < longest - soal[soal.size()-2].size(); ++j) // ngasih spasi
+        std::cout << " ";
+    std::cout << soal[soal.size()-2] << " +\n";
+
+    for (size_t i = 0; i < longest+2; ++i)
+        std::cout << '-';
+    std::cout << '\n';
+
+    for (size_t j = 0; j < longest - soal[soal.size()-1].size(); ++j) // ngasih spasi
+        std::cout << " ";
     std::cout << soal[soal.size()-1] << '\n';
 
-    cel();
+    std::cout << '\n';
+    std::cout << '\n';
 
     for (size_t i = 0; i < answer.size()-2; ++i)
+    {
+        for (size_t j = 0; j < longest - std::to_string(answer[i]).size(); ++j) // ngasih spasi
+            std::cout << " ";
         std::cout << answer[i] << '\n';
-    std::cout << answer[answer.size()-2] << "  +\n";
-    std::cout << strips << '\n';
+    }
+
+    for (size_t j = 0; j < longest - std::to_string(answer[answer.size()-2]).size(); ++j) // ngasih spasi
+        std::cout << " ";
+    std::cout << answer[answer.size()-2] << " +\n";
+
+    for (size_t i = 0; i < longest+2; ++i)
+        std::cout << '-';
+    std::cout << '\n';
+
+    for (size_t j = 0; j < longest - soal[soal.size()-1].size(); ++j) // ngasih spasi
+        std::cout << " ";
     std::cout << answer[answer.size()-1] << '\n';
 }
