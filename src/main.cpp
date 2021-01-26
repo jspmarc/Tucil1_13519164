@@ -51,7 +51,8 @@ std::vector<std::vector<int>> generate_permutated_numbers(int lim);
  * @param soal soal yang mau didekripsi
  * @param permutatedNumbers vektor berisi vektor-vektor kumpulan
  * permutasi-permutasi yang mungkin dari vektor angka [0..MAX_UNIQUE_LETTERS]
- * @returns sebuah pair berisi solusi benar dan jumlah kasus yang dikerjakan
+ * @returns sebuah pair berisi solusi benar dan jumlah kasus yang dikerjakan,
+ * jika tidak ada solusi jumlah kasus adalah -1
  */
 std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soal, std::vector<std::vector<int>> permutatedNumbers);
 
@@ -63,12 +64,20 @@ std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soa
 std::vector<char> unique_letters(std::vector<std::string> soal);
 
 /**
- * Fungsi untuk menuliskan jawaban sesuai dengan spek
+ * Fungsi untk menuliskan isi vector of ints menjadi dalam bentuk penjumlahan
  *
- * @param soal vektor yang berisi soal yang ingin diprint, hasil parse parse_file()
- * @param answer jawaban dari soal yang ingin diprint, hasil decrypt_cryparithm()
+ * @param vec vector yang ingin dituliskan outputnya
  */
-void print_answer(std::vector<std::string> soal, std::vector<int> answer);
+void vector_formatted_print(std::vector<int> vec);
+
+/**
+ * Fungsi untk menuliskan isi vector of strings menjadi dalam bentuk penjumlahan
+ *
+ * @param vec vector yang ingin dituliskan outputnya
+ *
+ * @overload
+ */
+void vector_formatted_print(std::vector<std::string> vec);
 
 /**
  * Fungsi untuk membaca file (sesuai format pada spek) lalu memisahkannya
@@ -143,21 +152,32 @@ int main(int argc, char *argv[])
         answers[i] = result.first;
         cases = result.second;
 
-        print_answer(*it, answers[i]);
-        printf("\n");
+        puts("-------------------------------------------------------------");
+
+        vector_formatted_print(*it);
+        printf("\n\n");
+        if (cases > -1)
+        {
+            vector_formatted_print(answers[i]);
+            printf("\n");
+        }
+        else puts("Tidak ada solusi.");
 
         /// akhir hitungan waktu
         auto partialEnd = sc.now();
         auto partialTimeSpend = static_cast<std::chrono::duration<double>>(partialEnd-partialStart);
-        printf("Soal ke-%d membutuhkan: %lf detik.\n", i+1, partialTimeSpend.count());
-        printf("Jumlah kasus yang diuji adalah %d.\n\n", cases);
+        printf("Soal ke-%d membutuhkan: %lf detik (%lf detik jika dihitung dengan waktu permutasi).\n", i+1, partialTimeSpend.count(), partialTimeSpend.count() + permTS.count());
+        if (cases > -1)
+            printf("Jumlah kasus yang diuji adalah %d.\n\n", cases);
+        else
+            printf("\n\n");
     }
 
     // akhir perhitungan waktu semua soal
     auto end = sc.now();
     auto timeSpend = static_cast<std::chrono::duration<double>>(end-start);
 
-    printf("Total waktu permutasi, eksekusi dekripsi %lu soal, dan menuliskan output adalah %lf detik.\n",
+    printf("Total waktu 1 kali permutasi, eksekusi dekripsi %lu soal, dan menuliskan output adalah %lf detik.\n",
             semuaSoal.size(), timeSpend.count());
 }
 
@@ -239,9 +259,16 @@ std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soa
 
     // proses dekripsi
 
+    /// variabel untuk menyimpan sum dari semua operand
+    int sum = 0,
+    /// variabel untuk menyimmpan sum 'yang seharusnya'
+        realSum = 0;
+
     /// numbers vektor yang berisi angka [0..9] yang sudah dipermutasi
     for (std::vector<int> numbers: permutatedNumbers)
     {
+        sum = 0;
+        realSum = 0;
         operandInNumbers.clear();
         // map huruf ke angka
         for (size_t i = 0; i < letters.size(); ++i)
@@ -254,11 +281,6 @@ std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soa
         for (char c: firstLetters) stopThyLoop = numberFromLetter[c] == 0;
 
         if (stopThyLoop) continue;
-
-        /// variabel untuk menyimpan sum dari semua operand
-        int sum = 0,
-        /// variabel untuk menyimmpan sum 'yang seharusnya'
-            realSum = 0;
 
         // ubah operand-operand menjadi angka
         for (size_t i = 0; i < soal.size(); ++i)
@@ -278,6 +300,8 @@ std::pair<std::vector<int>, int> decrypt_cryparithm(std::vector<std::string> soa
         if (sum == realSum) break;
         else cases++;
     }
+
+    if (sum != realSum) cases = -1;
 
     return std::make_pair(operandInNumbers, cases);
 }
@@ -311,52 +335,54 @@ std::vector<char> unique_letters(std::vector<std::string> soal)
     return letters;
 }
 
-void print_answer(std::vector<std::string> soal, std::vector<int> answer)
+void vector_formatted_print(std::vector<int> vec)
 {
     size_t longest = 0;
-    for (std::string operand: soal)
+    for (int operand: vec)
+        if (longest < std::to_string(operand).size()) longest = std::to_string(operand).size();
+
+    for (size_t i = 0; i < vec.size()-2; ++i)
+    {
+        for (size_t j = 0; j < longest - std::to_string(vec[i]).size(); ++j) // ngasih spasi
+            std::cout << " ";
+        std::cout << vec[i] << '\n';
+    }
+    for (size_t j = 0; j < longest - std::to_string(vec[vec.size()-2]).size(); ++j) // ngasih spasi
+        std::cout << " ";
+    std::cout << vec[vec.size()-2] << "+\n";
+
+    for (size_t i = 0; i < longest+1; ++i)
+        std::cout << '-';
+    std::cout << '\n';
+
+    for (size_t j = 0; j < longest - std::to_string(vec[vec.size()-1]).size(); ++j) // ngasih spasi
+        std::cout << " ";
+    std::cout << vec[vec.size()-1];
+}
+
+void vector_formatted_print(std::vector<std::string> vec)
+{
+    size_t longest = 0;
+    for (std::string operand: vec)
         if (longest < operand.size()) longest = operand.size();
 
-
-    for (size_t i = 0; i < soal.size()-2; ++i)
+    for (size_t i = 0; i < vec.size()-2; ++i)
     {
-        for (size_t j = 0; j < longest - soal[i].size(); ++j) // ngasih spasi
+        for (size_t j = 0; j < longest - vec[i].size(); ++j) // ngasih spasi
             std::cout << " ";
-        std::cout << soal[i] << '\n';
+        std::cout << vec[i] << '\n';
     }
-    for (size_t j = 0; j < longest - soal[soal.size()-2].size(); ++j) // ngasih spasi
+    for (size_t j = 0; j < longest - vec[vec.size()-2].size(); ++j) // ngasih spasi
         std::cout << " ";
-    std::cout << soal[soal.size()-2] << "+\n";
+    std::cout << vec[vec.size()-2] << "+\n";
 
     for (size_t i = 0; i < longest+1; ++i)
         std::cout << '-';
     std::cout << '\n';
 
-    for (size_t j = 0; j < longest - soal[soal.size()-1].size(); ++j) // ngasih spasi
+    for (size_t j = 0; j < longest - vec[vec.size()-1].size(); ++j) // ngasih spasi
         std::cout << " ";
-    std::cout << soal[soal.size()-1] << '\n';
-
-    std::cout << '\n';
-    std::cout << '\n';
-
-    for (size_t i = 0; i < answer.size()-2; ++i)
-    {
-        for (size_t j = 0; j < longest - std::to_string(answer[i]).size(); ++j) // ngasih spasi
-            std::cout << " ";
-        std::cout << answer[i] << '\n';
-    }
-
-    for (size_t j = 0; j < longest - std::to_string(answer[answer.size()-2]).size(); ++j) // ngasih spasi
-        std::cout << " ";
-    std::cout << answer[answer.size()-2] << "+\n";
-
-    for (size_t i = 0; i < longest+1; ++i)
-        std::cout << '-';
-    std::cout << '\n';
-
-    for (size_t j = 0; j < longest - soal[soal.size()-1].size(); ++j) // ngasih spasi
-        std::cout << " ";
-    std::cout << answer[answer.size()-1] << '\n';
+    std::cout << vec[vec.size()-1];
 }
 
 std::string strip_at_beginning(char* strToStrip)
