@@ -106,23 +106,24 @@
   \item Proses dekripsi \textit{cryptarithmetic} dimulai dengan pembuatan
     himpunan/matriks berukuran $10! \times 10$ yang berisi kemungkinan
     permutasi himpunan yang terdiri dari 10 angka (0, 1, 2, \ldots, 9).
-  \item Selanjutnya, untuk soal yang ingin didekripsi, dicari huruf-huruf
-    uniknya.
+  \item Selanjutnya, pilih salah satu soal untuk didekripsi lalu dicari
+    huruf-huruf uniknya.
   \item Kemudian, setiap huruf unik akan di-\textit{assign} sebuah nilai yang
     diambil dari setiap anggota himpunan dari matriks yang dibuat pada langkah
     1.
 
-    Misalnya jika anggota himpunannya adalah [5, 2, 0, 3, 4, 1, 8, 9,
-    7, 6] dan huruf uniknya terdiri dari [C, T, A], maka C = 5, T = 2, A = 0,
-    dan anggota himpunan lainnya ``dibuang''\footnote{Algoritma ini bisa
-    menyebabkan rekalkulasi (misalnya jika anggota himpunannya adalah [5, 2, 0,
-    1, 3, 4, 6, 7, 8, 9], maka C~=~5, T =~2, A~=~0), tapi setelah pengujian,
+    Misalnya jika anggota himpunannya adalah \{5, 2, 0, 3, 4, 1, 8, 9,
+    7, 6\} dan huruf uniknya terdiri dari \{C, T, A\}, maka C = 5, T = 2, A =
+    0, dan anggota himpunan lainnya ``dibuang''\footnote{Algoritma ini bisa
+    menyebabkan rekalkulasi (misalnya jika anggota himpunannya adalah \{5, 2, 0,
+    1, 3, 4, 6, 7, 8, 9\}, maka C~=~5, T =~2, A~=~0), tapi setelah pengujian,
     cara ini bisa menyebabkan perhitungan lebih cepat jika diberikan beberapa
-    soal sekaligus.}.
+    soal sekaligus karena hanya perlu membuat satu enumerasi semua kemungkinan
+    permutasi.}.
   \item Selanjutnya, diperiksa ada atau tidak huruf depan \textit{operand} yang
     di-\textit{assign} ke angka 0.
     \begin{itemize}
-      \item Jika ada, kembali ke langkah sebelumna dan pilih anggota himpunan
+      \item Jika ada, kembali ke langkah sebelumnya dan pilih anggota himpunan
         lain, tetapi
       \item jika tidak ada, lanjutkan ke langkah selanjutnya.
     \end{itemize}
@@ -134,9 +135,11 @@
     pada langkah 5 diperiksa sudah sama dengan hasil yang diubah ke angka atau
     belum.
     \begin{itemize}
-      \item Jika sama, lanjutkan ke langkah selanjutnya, tetapi
-      \item jika tidak sama, kembali ke langkah 2 dengan memilih anggota
-        himpunan yang lain.
+      \item Jika tidak sama dan masih ada anggota himpunan hasil permutasi lain
+        yang belum diuji, kembali ke langkah 3 dengan memilih anggota himpunan
+        lain yang belum diuji, tetapi
+      \item jika sama atau sudah tidak ada anggota himpunan hasil permutasi
+        lain yang belum diuji, lanjutkan ke langkah selanjutnya.
     \end{itemize}
   \item Pada langkah ini, program sudah selesai bekerja jika semua soal sudah
     didekripsi, tetapi jika masih ada soal lagi, program akan kembali ke
@@ -237,7 +240,7 @@ void vector_formatted_print(std::vector<std::string> vec);
 void parse_file(char* fileName, std::vector<std::vector<std::string>>* output);
 
 /**
- * Fungsi untuk menghapuskan whitespaces ('', '\t', '\n') dari awal C string
+ * Fungsi untuk menghapuskan whitespaces (' ', '\t', '\n') dari awal C string
  *
  * @param *strToStrip pointer ke C string yang ingin di-strip
  * @returns std::string yang sudah dihapuskan whitespace-nya

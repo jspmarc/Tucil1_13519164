@@ -90,7 +90,7 @@ void vector_formatted_print(std::vector<std::string> vec);
 void parse_file(char* fileName, std::vector<std::vector<std::string>>* output);
 
 /**
- * Fungsi untuk menghapuskan whitespaces ('', '\t', '\n') dari awal C string
+ * Fungsi untuk menghapuskan whitespaces (' ', '\t', '\n') dari awal C string
  *
  * @param *strToStrip pointer ke C string yang ingin di-strip
  * @returns std::string yang sudah dihapuskan whitespace-nya
